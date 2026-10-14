@@ -12,37 +12,23 @@ Sem --sem-limite, consultas SELECT recebem LIMIT automático (padrão 500).
 """
 
 import argparse
-import re
 import sys
 import time
 from pathlib import Path
 
 import pandas as pd
 
-from db import RAIZ, consultar, parametros_usados
-
-SAIDAS = RAIZ / "saidas"
-
+from db import aplicar_limite, consultar, exportar, parametros_usados
 
 def carregar_sql(arg: str) -> str:
     caminho = Path(arg)
     if not caminho.is_absolute():
-        caminho = RAIZ / caminho
+        caminho = Path(__file__).resolve().parent / caminho
     if arg.lower().endswith(".sql"):
         if not caminho.exists():
             sys.exit(f"Arquivo não encontrado: {arg}")
         return caminho.read_text(encoding="utf-8")
     return arg
-
-
-def aplicar_limite(sql: str, limite: int) -> str:
-    corpo = sql.strip().rstrip(";")
-    if not re.match(r"^\s*(SELECT|WITH)\b", re.sub(r"--[^\n]*", "", corpo).strip(), re.I):
-        return corpo
-    # Já tem LIMIT no final? respeita.
-    if re.search(r"\bLIMIT\s+\d+(\s*,\s*\d+|\s+OFFSET\s+\d+)?\s*$", corpo, re.I):
-        return corpo
-    return f"{corpo}\nLIMIT {limite}"
 
 
 def parse_params(itens: list[str]) -> dict:
@@ -93,16 +79,10 @@ def main() -> None:
     if not args.sem_limite and len(df) == args.limite:
         print("⚠️  Resultado bateu no LIMIT — pode haver mais linhas. Agregue no SQL ou use --sem-limite.")
 
-    SAIDAS.mkdir(exist_ok=True)
     if args.csv:
-        destino = SAIDAS / f"{args.csv}.csv"
-        df.to_csv(destino, index=False, encoding="utf-8-sig", sep=";", decimal=",")
-        print(f"CSV salvo em {destino}")
+        print(f"CSV salvo em {exportar(df, args.csv, 'csv')}")
     if args.xlsx:
-        destino = SAIDAS / f"{args.xlsx}.xlsx"
-        df.to_excel(destino, index=False)
-        print(f"XLSX salvo em {destino}")
-
+        print(f"XLSX salvo em {exportar(df, args.xlsx, 'xlsx')}")
 
 if __name__ == "__main__":
     main()

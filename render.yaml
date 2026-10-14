@@ -1,0 +1,33 @@
+# MCP remoto do api-mkt (conector do Claude Desktop / claude.ai).
+# Criar no Render: New → Blueprint → repositório ulisseso2/api-mkt.
+# URL do conector: https://<servico>.onrender.com/mcp/<MCP_TOKEN>  (é uma senha: não commitar, não postar)
+services:
+  - type: web
+    name: api-mkt-mcp
+    runtime: python
+    plan: starter            # sempre ligado: no free ele dorme e a 1ª consulta dá timeout no Claude
+    buildCommand: pip install -r requirements.txt
+    startCommand: python mcp_server.py --http
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: QUERY_TIMEOUT_MS
+        value: "60000"
+      # Preenchidas no painel na criação (sync: false = nunca vêm do git).
+      # MYSQL_*: mesmo usuário readonly do .env local. No Render a senha NÃO leva aspas.
+      - key: MYSQL_HOST
+        sync: false
+      - key: MYSQL_PORT
+        sync: false
+      - key: MYSQL_USER
+        sync: false
+      - key: MYSQL_PASSWORD
+        sync: false
+      - key: MYSQL_DB_NAME
+        sync: false
+      # 32+ caracteres [A-Za-z0-9_-]. Gerar com:
+      #   python3 -c "import secrets; print(secrets.token_urlsafe(32))"
+      - key: MCP_TOKEN
+        sync: false

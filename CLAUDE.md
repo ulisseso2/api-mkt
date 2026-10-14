@@ -131,6 +131,11 @@ O banco tem dados pessoais de clientes (nome, CPF, e-mail, telefone, endereço).
   Prefira períodos de até alguns meses, ou agregue.
 - Se uma consulta estourar o timeout, reduza o período ou agregue. Não tente aumentar o timeout.
 
+## Instalar no Claude Desktop
+
+Se a usuária pedir para usar pelo Claude Desktop (conector + skill), siga o roteiro
+`INSTALACAO_CLAUDE_DESKTOP.md` passo a passo.
+
 ## Primeira vez nesta máquina (setup)
 
 Se `.venv/` não existir ou der erro de módulo, rode e explique à usuária que é uma instalação única:
@@ -150,3 +155,6 @@ credencial: diga isso de forma simples e oriente a falar com o Ulisses.
 `schema/tabelas/*.md`, `schema/dominios.md` e `schema/indice_tabelas.md` são gerados do
 banco real por `.venv/bin/python scripts/gerar_schema.py`. Rode de novo se uma coluna
 documentada não existir mais. `schema/visao-geral.md` é escrito à mão.
+Depois de mudar `schema/` ou `skill/SKILL.md`, refaça o zip da skill com
+`.venv/bin/python scripts/empacotar_skill.py`. As definições de negócio existem em três lugares
+(este arquivo, `skill/SKILL.md` e `INSTRUCOES` em `mcp_server.py`): mude nos três.

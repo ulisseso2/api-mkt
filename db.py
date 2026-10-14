@@ -16,6 +16,9 @@ from dotenv import load_dotenv
 RAIZ = Path(__file__).resolve().parent
 load_dotenv(RAIZ / ".env")
 
+# Pasta das planilhas exportadas (SAIDAS_DIR no .env; padrão: saidas/ do projeto).
+_SAIDAS_PADRAO = RAIZ / "saidas"
+
 # Tempo máximo de uma consulta no servidor (ms). O banco é de produção.
 TIMEOUT_MS = int(os.getenv("QUERY_TIMEOUT_MS", "60000"))
 
@@ -107,3 +110,30 @@ def consultar(
     finally:
         if propria:
             conn.close()
+
+
+def aplicar_limite(sql: str, limite: int) -> str:
+    corpo = sql.strip().rstrip(";")
+    if not re.match(r"^\s*(SELECT|WITH)\b", re.sub(r"--[^\n]*", "", corpo).strip(), re.I):
+        return corpo
+    # Já tem LIMIT no final? respeita.
+    if re.search(r"\bLIMIT\s+\d+(\s*,\s*\d+|\s+OFFSET\s+\d+)?\s*$", corpo, re.I):
+        return corpo
+    return f"{corpo}\nLIMIT {limite}"
+
+
+def pasta_saidas() -> Path:
+    destino = Path(os.path.expanduser(os.getenv("SAIDAS_DIR", ""))) if os.getenv("SAIDAS_DIR") else _SAIDAS_PADRAO
+    destino.mkdir(parents=True, exist_ok=True)
+    return destino
+
+
+def exportar(df: pd.DataFrame, nome: str, formato: str = "xlsx") -> Path:
+    """Salva o DataFrame em SAIDAS_DIR/nome.xlsx|csv e devolve o caminho."""
+    nome = re.sub(r"[^\w\-]+", "_", nome.strip()).strip("_") or "consulta"
+    destino = pasta_saidas() / f"{nome}.{formato}"
+    if formato == "csv":
+        df.to_csv(destino, index=False, encoding="utf-8-sig", sep=";", decimal=",")
+    else:
+        df.to_excel(destino, index=False)
+    return destino
