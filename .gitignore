@@ -1,0 +1,5 @@
+.env
+.venv/
+saidas/*
+!saidas/.gitkeep
+__pycache__/

@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(.venv/bin/python q.py:*)",
+      "Bash(.venv/bin/python scripts/gerar_schema.py:*)",
+      "Read(./schema/**)",
+      "Read(./consultas/**)",
+      "Read(./saidas/**)"
+    ],
+    "deny": [
+      "Read(./.env)",
+      "Bash(cat .env:*)",
+      "Bash(cat ./.env:*)"
+    ]
+  }
+}
