@@ -5,6 +5,7 @@ services:
   - type: web
     name: api-mkt-mcp
     runtime: python
+    region: ohio
     plan: starter            # sempre ligado: no free ele dorme e a 1ª consulta dá timeout no Claude
     buildCommand: pip install -r requirements.txt
     startCommand: python mcp_server.py --http
