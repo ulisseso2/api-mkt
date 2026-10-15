@@ -1,13 +1,14 @@
 -- VENDAS (pedidos) do período — 1 linha por pedido, SEM dados pessoais.
 -- Parâmetros: :inicio, :fim (inclusivo), :escola (1=Degrau, 2=Central, 0=ambas)
 -- Data da venda = paid_at (mesmo critério do seducar-dashboard).
+-- ⚠️ paid_at está gravado em UTC: a consulta desconta 3h (DATE_SUB) para dar horário de Brasília.
 -- Traz TODOS os status: filtre depois. Venda líquida = status_id 2 (Pago).
 -- Venda bruta (padrão das telas de vendas) = status_id IN (2, 3, 10, 14, 15).
 SELECT
     o.id                                            AS pedido_id,
     CASE WHEN o.school_id = 1 THEN 'Degrau' ELSE 'Central' END AS empresa,
-    o.paid_at                                       AS data_venda,
-    DATE(o.paid_at)                                 AS dia,
+    DATE_SUB(o.paid_at, INTERVAL 3 HOUR)            AS data_venda,
+    DATE(DATE_SUB(o.paid_at, INTERVAL 3 HOUR))      AS dia,
     os.id                                           AS status_id,
     os.name                                         AS status,
     o.total                                         AS valor_total,
@@ -60,12 +61,12 @@ LEFT JOIN (
     LEFT JOIN units u3           ON u3.id = o2.unit_id
     LEFT JOIN courses cu         ON cu.id = t.course_id
     LEFT JOIN course_sales cs    ON cs.id = cu.course_sale_id
-    WHERE o2.paid_at >= :inicio
-      AND o2.paid_at <  DATE_ADD(:fim, INTERVAL 1 DAY)
+    WHERE o2.paid_at >= DATE_ADD(:inicio, INTERVAL 3 HOUR)
+      AND o2.paid_at <  DATE_ADD(:fim, INTERVAL 27 HOUR)
     GROUP BY oi.order_id
 ) it ON it.order_id = o.id
-WHERE o.paid_at >= :inicio
-  AND o.paid_at <  DATE_ADD(:fim, INTERVAL 1 DAY)
+WHERE o.paid_at >= DATE_ADD(:inicio, INTERVAL 3 HOUR)
+  AND o.paid_at <  DATE_ADD(:fim, INTERVAL 27 HOUR)
   AND (:escola = 0 OR o.school_id = :escola)
   AND o.school_id IN (1, 2)
 ORDER BY o.paid_at DESC

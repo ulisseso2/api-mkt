@@ -40,13 +40,17 @@ interested_pontuations ──interested_id──► interesteds ◄──opportu
    subconsulta (como em `consultas/vendas.sql`). O mesmo vale para pontuações duplicadas.
 2. **Escolas de teste.** `school_id` 3, 4 e 5 são homologação: filtre `IN (1, 2)`.
 3. **`paid_at` vem preenchido até em pedido não pago.** O status decide se é venda.
-4. **Etapas por marca.** "Vendido" é 12 na Degrau e 20 na Central. Nunca filtre por um id só
+4. **Fuso das datas.** O banco roda em UTC e o runner lê as datas como gravadas. `created_at` e
+   `updated_at` já estão em horário de Brasília. `orders.paid_at` está em UTC: desconte 3h
+   (`DATE_SUB(o.paid_at, INTERVAL 3 HOUR)`) antes de agrupar por dia/hora ou comparar com `created_at`.
+   Não use `NOW()`/`CURDATE()` no SQL (devolvem UTC).
+5. **Etapas por marca.** "Vendido" é 12 na Degrau e 20 na Central. Nunca filtre por um id só
    quando a pergunta envolve as duas marcas.
-5. **Leads sem UTM** são a maior fatia (WhatsApp, telefone, orgânico). Não os descarte. Mostre
+6. **Leads sem UTM** são a maior fatia (WhatsApp, telefone, orgânico). Não os descarte. Mostre
    como "(sem utm)".
-6. **Upsell (origem 14)** infla leads se não for excluído.
-7. **Pontuação só existe desde 16/06/2026.** Antes disso, "sem tier" não quer dizer lead ruim.
-8. **Regras de unidade/modalidade:** quando o lead não tem unidade, ela é derivada da modalidade
+7. **Upsell (origem 14)** infla leads se não for excluído.
+8. **Pontuação só existe desde 16/06/2026.** Antes disso, "sem tier" não quer dizer lead ruim.
+9. **Regras de unidade/modalidade:** quando o lead não tem unidade, ela é derivada da modalidade
    (ver CASE em `consultas/leads.sql`). Units 22/24 = Live, 23/25 = EAD, 26/27 = Smart.
 
 ## Status de pedido (resumo; lista completa em dominios.md)

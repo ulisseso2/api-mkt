@@ -109,7 +109,12 @@ read-only. **Nunca tente escrever no banco, nem contornar essas travas.**
 - **UTMs** ficam no lead (`interesteds.utm_*`, `gclid`, `fbclid`) e, para pedidos recentes do
   site, em `order_attributions` (1 linha por pedido, só para alguns pedidos de 2026). Leads sem UTM
   são comuns (WhatsApp, receptivo, orgânico). Trate como "(sem utm)" e não descarte.
-- **Fuso:** as datas estão em horário de Brasília. O runner já configura a sessão em -03:00.
+- **Fuso (cuidado):** o banco está em UTC e o runner lê as datas **como estão gravadas** (sessão `+00:00`).
+  `created_at`/`updated_at` (leads, pedidos, logs...) já estão em horário de Brasília: use direto.
+  Só **`orders.paid_at` está em UTC**: ao usá-lo, desconte 3h (`DATE_SUB(o.paid_at, INTERVAL 3 HOUR)`),
+  como fazem `vendas.sql` e `vendas_por_dia.sql`. (Cerca de 8% dos pedidos pagos têm `paid_at` já em
+  Brasília, então a hora exata de uma venda pode errar; o dia só erra de madrugada.) Em SQL novo,
+  **não use `NOW()`/`CURDATE()`** (devolvem UTC): passe as datas como parâmetro.
 
 ## Privacidade (obrigatório)
 

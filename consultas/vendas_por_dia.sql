@@ -1,9 +1,10 @@
 -- VENDAS POR DIA E CATEGORIA — agregado (venda líquida = status Pago).
 -- Parâmetros: :inicio, :fim (inclusivo), :escola (1=Degrau, 2=Central, 0=ambas)
+-- ⚠️ paid_at está gravado em UTC: a consulta desconta 3h (DATE_SUB) para dar horário de Brasília.
 -- Pedido com itens de várias categorias entra uma vez em cada (valor do pedido não é rateado:
 -- para receita total use vendas_por_dia sem a coluna categoria, ou some valor_total em vendas.sql).
 SELECT
-    DATE(o.paid_at)                                  AS dia,
+    DATE(DATE_SUB(o.paid_at, INTERVAL 3 HOUR))       AS dia,
     CASE WHEN o.school_id = 1 THEN 'Degrau' ELSE 'Central' END AS empresa,
     COALESCE(pc.name, '(sem item)')                  AS categoria,
     COUNT(DISTINCT o.id)                             AS pedidos_pagos,
@@ -11,8 +12,8 @@ SELECT
 FROM orders o
 LEFT JOIN order_items oi        ON oi.order_id = o.id
 LEFT JOIN product_categories pc ON pc.id = oi.product_category_id
-WHERE o.paid_at >= :inicio
-  AND o.paid_at <  DATE_ADD(:fim, INTERVAL 1 DAY)
+WHERE o.paid_at >= DATE_ADD(:inicio, INTERVAL 3 HOUR)
+  AND o.paid_at <  DATE_ADD(:fim, INTERVAL 27 HOUR)
   AND (:escola = 0 OR o.school_id = :escola)
   AND o.school_id IN (1, 2)
   AND o.order_status_id = 2

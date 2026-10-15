@@ -82,7 +82,9 @@ def conectar() -> pymysql.connections.Connection:
     )
     with conn.cursor() as cur:
         cur.execute("SET SESSION TRANSACTION READ ONLY")
-        cur.execute("SET time_zone = '-03:00'")
+        # Sessão em UTC = lê as colunas como estão gravadas. created_at/updated_at já estão em
+        # horário de Brasília; só orders.paid_at está em UTC (descontar 3h nas consultas).
+        cur.execute("SET time_zone = '+00:00'")
         cur.execute(f"SET SESSION max_execution_time = {TIMEOUT_MS}")
     return conn
 

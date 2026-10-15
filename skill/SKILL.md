@@ -58,6 +58,7 @@ Consultas prontas: `leads`, `leads_por_campanha`, `pontuacao_resumo`, `etapas_cr
   - **líquida (padrão):** `order_status_id = 2` (Pago).
   - **bruta:** `order_status_id IN (2, 3, 10, 14, 15)` (Pago, Cancelado, Expirada, Trancada, Em cancelamento).
   - `paid_at` vem preenchido até em pedido não pago. Receita = `orders.total`.
+- **Fuso:** o runner lê as datas como gravadas. `created_at` já está em horário de Brasília; só `orders.paid_at` está em UTC (use `DATE_SUB(paid_at, INTERVAL 3 HOUR)`). Não use `NOW()`/`CURDATE()` no SQL (devolvem UTC).
 - **Lead virou venda?** São 3 critérios, com números diferentes. Diga qual usou:
   1. etapa do CRM = Vendido (`opportunity_step_id IN (12, 20)`), o que o time marcou;
   2. vínculo direto: pedido pago com `orders.opportunity_id = interesteds.id`;

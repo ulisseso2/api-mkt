@@ -2,6 +2,7 @@
 --   vendido_etapa    : etapa do CRM = Vendido (o que o time marcou)
 --   vendido_vinculo  : existe pedido pago com orders.opportunity_id = lead (vínculo direto)
 --   cliente_comprou  : o mesmo cliente (customer_id) tem pedido pago em até :janela dias após o lead
+--                      (paid_at está em UTC: desconta 3h para comparar com o created_at do lead)
 -- Parâmetros: :inicio, :fim (inclusivo), :escola (1/2/0), :janela (dias, ex.: 30)
 SELECT
     CASE WHEN i.school_id = 1 THEN 'Degrau' ELSE 'Central' END AS empresa,
@@ -14,8 +15,8 @@ SELECT
     SUM(i.customer_id IS NOT NULL AND EXISTS (
             SELECT 1 FROM orders v
             WHERE v.customer_id = i.customer_id AND v.order_status_id = 2
-              AND v.paid_at >= i.created_at
-              AND v.paid_at <  DATE_ADD(i.created_at, INTERVAL :janela DAY))) AS cliente_comprou
+              AND DATE_SUB(v.paid_at, INTERVAL 3 HOUR) >= i.created_at
+              AND DATE_SUB(v.paid_at, INTERVAL 3 HOUR) <  DATE_ADD(i.created_at, INTERVAL :janela DAY))) AS cliente_comprou
 FROM interesteds i
 LEFT JOIN opportunity_origins o ON o.id = i.opportunity_origin_id
 WHERE i.created_at >= :inicio
