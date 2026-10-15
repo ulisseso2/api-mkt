@@ -65,7 +65,6 @@ Regras que NÃO podem ser esquecidas:
 - Fuso: a sessão lê as datas como gravadas. created_at/updated_at já estão em horário de Brasília;
   orders.paid_at está em UTC (use DATE_SUB(paid_at, INTERVAL 3 HOUR)). Não use NOW()/CURDATE() (UTC).
 - Sempre filtre por período (banco de produção; orders não tem índice de data).
-- Não traga dados pessoais (nome, CPF, e-mail, telefone, endereço) em análises.
 """
 
 mcp = MCPServer(name="api-mkt", title="Análises de marketing Seducar", instructions=INSTRUCOES)

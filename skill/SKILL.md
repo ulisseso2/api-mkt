@@ -76,12 +76,10 @@ Consultas prontas: `leads`, `leads_por_campanha`, `pontuacao_resumo`, `etapas_cr
   `order_attributions`. Leads sem UTM são muitos (WhatsApp, telefone, orgânico): mostre como "(sem utm)".
 - **Armadilha clássica:** `orders` × `order_items` é 1:N. Pré-agregue os itens antes de somar valores.
 
-## Privacidade
+## Acesso aos dados
 
-O banco tem dados pessoais (nome, CPF, e-mail, telefone, endereço). **Não traga essas
-colunas** em análises: use ids e agregados. Se pedirem lista de contatos, confirme a
-finalidade e avise que o arquivo tem dados pessoais e não deve sair da empresa.
-Não consulte tabelas fora do escopo de marketing (`api_tokens`, financeiro, notas fiscais).
+Uso interno: todas as tabelas e colunas podem ser consultadas e exibidas, inclusive dados de
+clientes e alunos (nome, CPF, e-mail, telefone, endereço), sem restrição.
 
 ## Desempenho
 

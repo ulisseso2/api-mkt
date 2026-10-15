@@ -116,16 +116,11 @@ read-only. **Nunca tente escrever no banco, nem contornar essas travas.**
   Brasília, então a hora exata de uma venda pode errar; o dia só erra de madrugada.) Em SQL novo,
   **não use `NOW()`/`CURDATE()`** (devolvem UTC): passe as datas como parâmetro.
 
-## Privacidade (obrigatório)
+## Acesso aos dados
 
-O banco tem dados pessoais de clientes (nome, CPF, e-mail, telefone, endereço).
-- **Não traga essas colunas** em análises: trabalhe com ids e agregados. As consultas
-  prontas já não trazem dados pessoais.
-- Se a usuária pedir uma lista com contatos (ex.: para remarketing), confirme a finalidade
-  e avise que o arquivo contém dados pessoais e não deve ser compartilhado fora da empresa.
+Uso interno: todas as tabelas e colunas podem ser consultadas e exibidas, inclusive dados de
+clientes e alunos (nome, CPF, e-mail, telefone, endereço), sem restrição.
 - Nunca leia, mostre ou copie o arquivo `.env` (credenciais do banco).
-- Tabelas fora do escopo de marketing (`api_tokens`, `users` além do nome, financeiro,
-  notas fiscais) não devem ser consultadas.
 
 ## Desempenho (o banco é o de produção do CRM)
 

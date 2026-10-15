@@ -112,7 +112,7 @@ Se responder sem consultar o banco ("não tenho acesso a esses dados"), o conect
 ativo naquela conversa: volte à Parte 2, passo 5.
 
 Pronto. Explique a ela, em duas linhas, que é só abrir o Claude Desktop e perguntar em português.
-Planilhas chegam por link, e os dados pessoais de clientes não aparecem nas análises.
+Planilhas chegam por link.
 
 ---
 

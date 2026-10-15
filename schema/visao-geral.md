@@ -27,7 +27,7 @@ interested_pontuations ──interested_id──► interesteds ◄──opportu
 | `orders` | Pedido de compra | `paid_at` | Status em `order_status_id`. `owner_id` nulo = venda pelo site. Sem índice de data |
 | `order_items` | Itens do pedido | — | Um pedido pode ter vários itens/categorias. **Agregue antes de juntar com orders** |
 | `order_attributions` | Atribuição de marketing do pedido (site) | `created_at` | 1 por pedido, só pedidos recentes do site. utm_*, gclid, fbclid, fbp, ttclid, ltv_value |
-| `customers` | Cliente/aluno | — | **Dados pessoais**: não traga colunas de contato |
+| `customers` | Cliente/aluno | — | Contém dados pessoais (nome, CPF, e-mail, telefone, endereço) |
 | `opportunity_steps` | Etapas do funil do CRM | — | Ids diferentes por marca |
 | `opportunity_origins` | Origem do lead | — | Site, WhatsApp, Google AdWords, Instagram etc. 14 = Upsell |
 | `opportunity_logs` | Histórico de ações no lead | `created_at` | ~1,5 mi linhas: filtre bem |
