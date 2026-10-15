@@ -76,6 +76,9 @@ def conectar() -> pymysql.connections.Connection:
         password=os.environ["MYSQL_PASSWORD"],
         database=os.environ["MYSQL_DB_NAME"],
         charset="utf8mb4",
+        # Sem autocommit, a conexão reaproveitada pelo MCP fica presa numa transação e
+        # passa a ver uma "foto" antiga do banco (REPEATABLE READ): leads novos não aparecem.
+        autocommit=True,
         connect_timeout=15,
         read_timeout=max(TIMEOUT_MS // 1000 + 30, 60),
         cursorclass=pymysql.cursors.DictCursor,
