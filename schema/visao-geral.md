@@ -40,10 +40,11 @@ interested_pontuations ──interested_id──► interesteds ◄──opportu
    subconsulta (como em `consultas/vendas.sql`). O mesmo vale para pontuações duplicadas.
 2. **Escolas de teste.** `school_id` 3, 4 e 5 são homologação: filtre `IN (1, 2)`.
 3. **`paid_at` vem preenchido até em pedido não pago.** O status decide se é venda.
-4. **Fuso das datas.** O banco roda em UTC e o runner lê as datas como gravadas. `created_at` e
-   `updated_at` já estão em horário de Brasília. `orders.paid_at` está em UTC: desconte 3h
-   (`DATE_SUB(o.paid_at, INTERVAL 3 HOUR)`) antes de agrupar por dia/hora ou comparar com `created_at`.
-   Não use `NOW()`/`CURDATE()` no SQL (devolvem UTC).
+4. **Fuso das datas.** A sessão do MySQL é UTC e o runner lê as datas como gravadas. `created_at` e
+   `updated_at` sempre estiveram em horário de Brasília e, desde a correção de 20/10/2026, `orders.paid_at`,
+   `orders.request_date` e `transactions.paid_at` também (histórico convertido; originais em `*_tz_original`).
+   Use direto, sem `DATE_SUB`, para agrupar por dia/hora ou comparar com `created_at`.
+   Não use `NOW()`/`CURDATE()` no SQL (a sessão é UTC).
 5. **Etapas por marca.** "Vendido" é 12 na Degrau e 20 na Central. Nunca filtre por um id só
    quando a pergunta envolve as duas marcas.
 6. **Leads sem UTM** são a maior fatia (WhatsApp, telefone, orgânico). Não os descarte. Mostre
