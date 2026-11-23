@@ -3,9 +3,12 @@
 
   .venv/bin/python scripts/empacotar_skill.py
 
-Gera skill/analise-marketing-seducar.zip (versionado no git, para baixar pelo GitHub) com:
-  analise-marketing-seducar/SKILL.md          (de skill/SKILL.md)
-  analise-marketing-seducar/references/*.md   (copiados de schema/, sempre atualizados)
+Gera (versionados no git, para baixar pelo GitHub):
+  skill/analise-marketing-seducar.zip
+    analise-marketing-seducar/SKILL.md          (de skill/SKILL.md)
+    analise-marketing-seducar/references/*.md   (copiados de schema/, sempre atualizados)
+  skill/seducar-analise-financeira.zip
+    seducar-analise-financeira/SKILL.md         (de skill/financeiro/SKILL.md)
 """
 
 import zipfile
@@ -24,6 +27,12 @@ def main() -> None:
         for ref in REFERENCIAS:
             z.write(RAIZ / "schema" / ref, f"{NOME}/references/{ref}")
     print(f"Skill empacotada em: {destino}")
+
+    nome_fin = "seducar-analise-financeira"
+    destino_fin = RAIZ / "skill" / f"{nome_fin}.zip"
+    with zipfile.ZipFile(destino_fin, "w", zipfile.ZIP_DEFLATED) as z:
+        z.write(RAIZ / "skill" / "financeiro" / "SKILL.md", f"{nome_fin}/SKILL.md")
+    print(f"Skill empacotada em: {destino_fin}")
 
 
 if __name__ == "__main__":
